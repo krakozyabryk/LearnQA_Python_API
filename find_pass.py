@@ -20,8 +20,8 @@ for password in passwords:
         if response_check.text == "You are authorized":
             print(f"Верный пароль найден: {password}")
             break
-    else:
-        print(f"Неверный пароль: {password}")
+        else:
+            print(f"Неверный пароль: {password}")
 
 
 
