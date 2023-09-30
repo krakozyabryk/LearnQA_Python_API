@@ -34,9 +34,9 @@ class TestUserEdit(BaseCase):
         #EDIT
         new_name = "Changed name"
         response3 = MyRequests.put(f"/user/{user_id}",
-                                 headers={"x-csrf-token": token},
-                                 cookies={"auth_sid": auth_sid},
-                                 data={"firstName": new_name})
+                                   headers={"x-csrf-token": token},
+                                   cookies={"auth_sid": auth_sid},
+                                   data={"firstName": new_name})
         Assertions.assert_code_status(response3, 200)
 
         #GET
@@ -60,17 +60,17 @@ class TestUserEdit(BaseCase):
             "/user/",
             data=register_data
         )
-        Assertions.assert_code_status(response1,200)
-        Assertions.assert_json_has_key(response1,"id")
-        user_id = self.get_json_value(response1,"id")
+        Assertions.assert_code_status(response1, 200)
+        Assertions.assert_json_has_key(response1, "id")
+        user_id = self.get_json_value(response1, "id")
         # EDIT
         new_name = "Changed Name"
         response2 = MyRequests.put(
             f"/user/{user_id}",
             data={"firstName": new_name}
         )
-        Assertions.assert_code_status(response2,400)
-        Assertions.assert_response_text(response2,"Auth token not supplied")
+        Assertions.assert_code_status(response2, 400)
+        Assertions.assert_response_text(response2, "Auth token not supplied")
 
     @allure.step('Editing a newly created user by another authorized user')
     def test_edit_just_created_user_by_other_authorizated_user(self):
@@ -108,19 +108,19 @@ class TestUserEdit(BaseCase):
             "/user/login",
             data=login_data
         )
-        user2_auth_sid = self.get_cookie(response3,"auth_sid")
-        user2_token = self.get_header(response3,"x-csrf-token")
+        user2_auth_sid = self.get_cookie(response3, "auth_sid")
+        user2_token = self.get_header(response3, "x-csrf-token")
 
         #EDIT USER1 DATA USER2 CHECK THAT USER2 CAN'T EDIT USER1 DATA
         new_name = "Changed Name"
         response4 = MyRequests.put(
             f"/user/{user1_user_id}",
-            headers={"x-csrf-token":user2_auth_sid},
-            cookies={"auth_sid":user2_token},
+            headers={"x-csrf-token": user2_auth_sid},
+            cookies={"auth_sid": user2_token},
             data={"firstName": new_name}
         )
-        Assertions.assert_code_status(response4,400)
-        Assertions.assert_response_text(response4,"Auth token not supplied")
+        Assertions.assert_code_status(response4, 400)
+        Assertions.assert_response_text(response4, "Auth token not supplied")
 
         #LOGIN USER1
         login_data = {
@@ -154,25 +154,25 @@ class TestUserEdit(BaseCase):
     @allure.step("Editing a newly created user with incorrect data")
     def test_edit_just_created_user_with_incorrect_data(self, incorrect_parameter):
         # REGISTER
-        register_data = self.prepare_registration_data()
+        register_data = self.prepare_registrarion_data()
         response1 = MyRequests.post(
             "/user/",
             data=register_data
         )
 
-        Assertions.assert_code_status(response1,200)
-        Assertions.assert_json_has_key(response1,"id")
+        Assertions.assert_code_status(response1, 200)
+        Assertions.assert_json_has_key(response1, "id")
 
         email = register_data["email"]
         first_name = register_data["firstName"]
         password = register_data["password"]
-        user_id = self.get_json_value(response1,"id")
+        user_id = self.get_json_value(response1, "id")
 
 
         #LOGIN
         login_data = {
-            "email" : email,
-            "password" : password
+            "email": email,
+            "password": password
         }
 
         response2 = MyRequests.post(
@@ -181,19 +181,19 @@ class TestUserEdit(BaseCase):
         )
 
         auth_sid = self.get_cookie(response2,"auth_sid")
-        token = self.get_header(response2,"x-csrf-token")
+        token = self.get_header(response2, "x-csrf-token")
 
 
         #EDIT
         if incorrect_parameter == "email":
-            data_for_edit = {"email" : "email_without_symbol.mail.ru"}
+            data_for_edit = {"email": "email_without_symbol.mail.ru"}
         else:
             data_for_edit = {"firstName": "q"}
 
         response3 = MyRequests.put(
             f"/user/{user_id}",
-            headers={"x-csrf-token":token},
-            cookies={"auth_sid":auth_sid},
+            headers={"x-csrf-token": token},
+            cookies={"auth_sid": auth_sid},
             data=data_for_edit
         )
 
